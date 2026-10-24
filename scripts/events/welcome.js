@@ -1,3 +1,4 @@
+
 const { drive } = global.utils;
 const { nickNameBot } = global.GoatBot.config;
 const { createCanvas, loadImage } = require("canvas");
@@ -8,177 +9,246 @@ const axios = require("axios");
 module.exports = {
   config: {
     name: "welcome",
-    version: "8.0",
-    author: "EryXenX",
+    version: "8.1",
+    author: "Myoun",
     category: "events"
   },
 
   langs: {
     en: {
-      defaultWelcomeMessage: "𝗪𝗲𝗹𝗰𝗼𝗺𝗲 {userName} 🎉\n┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄\n✦ Glad to have you here! Enjoy your stay and make great memories 🌸",
+      defaultWelcomeMessage:
+        "╭───────୨♡୧───────╮\n\n" +
+        "🎀 𝗪𝗘𝗟𝗖𝗢𝗠𝗘 {userName}! 💗\n\n" +
+        "🌸 আমাদের ছোট্ট পরিবারে\n" +
+        "তোমাকে স্বাগতম! 🫶🏻\n\n" +
+        "📍 𝗬𝗢𝗨 𝗔𝗥𝗘 𝗜𝗡\n" +
+        "「 {threadName} 」\n\n" +
+        "💕 তোমার উপস্থিতিতে গ্রুপটি\n" +
+        "আরও সুন্দর হোক! 🌷\n\n" +
+        "💌 𝗠𝗬 𝗢𝗙𝗙𝗜𝗖𝗜𝗔𝗟 𝗚𝗥𝗢𝗨𝗣\n" +
+        "🎀 𝗖𝗨𝗧𝗘 𝗕𝗔𝗥𝗥𝗬 🎀\n\n" +
+        "👑 𝗕𝗢𝗧 𝗢𝗪𝗡𝗘𝗥 : 𝗠𝗬𝗢𝗨𝗡\n" +
+        "♡ 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗠𝗬𝗢𝗨𝗡 ♡\n\n" +
+        "╰───────୨♡୧───────╯",
+
       botAddedMessage:
-        "━━━━━━━━━━━━━━━━━━━\n🤖 ᴛʜᴀɴᴋ ʏᴏᴜ ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ᴛᴏ ᴛʜᴇ ɢʀᴏᴜᴘ! 💖\n\n⚙️ ʙᴏᴛ ᴘʀᴇꜰɪx : /\n📜 ᴛʏᴘᴇ /help ᴛᴏ sᴇᴇ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs\n\n✨ ʟᴇᴛ's ᴍᴀᴋᴇ ᴛʜɪs ɢʀᴏᴜᴘ ᴇᴠᴇɴ ᴍᴏʀᴇ ꜰᴜɴ ᴛᴏɢᴇᴛʜᴇʀ! 😄\n━━━━━━━━━━━━━━━━━━━"
+        "╭───────୨♡୧───────╮\n\n" +
+        "🎀 𝗛𝗘𝗟𝗟𝗢, 𝗕𝗘𝗔𝗨𝗧𝗜𝗘𝗦! 💗\n\n" +
+        "🤖 আমাকে এই গ্রুপে অ্যাড করার জন্য\n" +
+        "ধন্যবাদ! 🫶🏻🌸\n\n" +
+        "📍 𝗧𝗛𝗜𝗦 𝗚𝗥𝗢𝗨𝗣\n" +
+        "「 {threadName} 」\n\n" +
+        "⚙️ 𝗛𝗘𝗟𝗣 : {prefix}help\n\n" +
+        "💌 𝗠𝗬 𝗢𝗙𝗙𝗜𝗖𝗜𝗔𝗟 𝗚𝗥𝗢𝗨𝗣\n" +
+        "🎀 𝗖𝗨𝗧𝗘 𝗕𝗔𝗥𝗥𝗬 🎀\n\n" +
+        "💕 আমাদের গ্রুপেও ঘুরে আসতে পারেন!\n\n" +
+        "👑 𝗕𝗢𝗧 𝗢𝗪𝗡𝗘𝗥 : 𝗠𝗬𝗢𝗨𝗡\n" +
+        "♡ 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗠𝗬𝗢𝗨𝗡 ♡\n\n" +
+        "╰───────୨♡୧───────╯"
     }
   },
 
-  onStart: async ({ threadsData, message, event, api, usersData, getLang }) => {
+  onStart: async ({
+    threadsData, message, event, api, usersData, getLang
+  }) => {
     if (event.logMessageType !== "log:subscribe") return;
 
     const { threadID } = event;
     const threadData = await threadsData.get(threadID);
+
     if (!threadData.settings.sendWelcomeMessage) return;
 
-    const addedMembers = event.logMessageData.addedParticipants;
-    const threadName   = threadData.threadName || "our group";
-    const prefix       = global.utils.getPrefix(threadID);
-    const inviterID    = event.author;
+    const addedMembers = event.logMessageData.addedParticipants || [];
+    const threadName = threadData.threadName || "Our Group";
+    const inviterID = event.author;
+    const prefix = global.utils.getPrefix(threadID);
+    const botID = api.getCurrentUserID();
 
     for (const user of addedMembers) {
       const userID = user.userFbId;
-      const botID  = api.getCurrentUserID();
 
       if (userID == botID) {
-        if (nickNameBot) await api.changeNickname(nickNameBot, threadID, botID);
-        return message.send(getLang("botAddedMessage", prefix));
+        if (nickNameBot) {
+          await api.changeNickname(nickNameBot, threadID, botID);
+        }
+
+        const botMessage = getLang("botAddedMessage")
+          .replace(/\{threadName\}/g, threadName)
+          .replace(/\{prefix\}/g, prefix);
+
+        await message.send(botMessage);
+        continue;
       }
 
-      const userName    = user.fullName;
-      const inviterName = await usersData.getName(inviterID);
-      const memberCount = event.participantIDs.length;
+      const userName = user.fullName || "New Member";
+      const inviterName = inviterID
+        ? await usersData.getName(inviterID)
+        : "Unknown";
 
-      let { welcomeMessage = getLang("defaultWelcomeMessage") } = threadData.data;
+      const memberCount = (event.participantIDs || []).length;
+
+      let { welcomeMessage = getLang("defaultWelcomeMessage") } =
+        threadData.data || {};
+
       welcomeMessage = welcomeMessage
-        .replace(/\{userName\}/g,    userName)
-        .replace(/\{userTag\}/g,     userName)
-        .replace(/\{threadName\}/g,  threadName)
+        .replace(/\{userName\}/g, userName)
+        .replace(/\{userTag\}/g, userName)
+        .replace(/\{threadName\}/g, threadName)
         .replace(/\{memberCount\}/g, memberCount)
-        .replace(/\{inviterName\}/g, inviterName);
+        .replace(/\{inviterName\}/g, inviterName || "Unknown");
 
       let welcomeImagePath = null;
+
       try {
         welcomeImagePath = await createWelcomeCard({
-          userName, threadName, memberCount,
-          inviterName, newUserID: userID,
-          inviterID, threadID, api
+          userName,
+          threadName,
+          memberCount,
+          inviterName: inviterName || "Unknown",
+          newUserID: userID,
+          inviterID,
+          threadID,
+          api
         });
       } catch (err) {
-        console.error("Welcome image creation failed:", err);
+        console.error("[Myoun Welcome] Image error:", err);
       }
 
       const form = {
-        body:     welcomeMessage,
+        body: welcomeMessage,
         mentions: [{ tag: userName, id: userID }]
       };
 
-      if (welcomeImagePath && fs.existsSync(welcomeImagePath)) {
+      if (welcomeImagePath && await fs.pathExists(welcomeImagePath)) {
         form.attachment = fs.createReadStream(welcomeImagePath);
-      } else if (threadData.data.welcomeAttachment) {
-        const attachments = threadData.data.welcomeAttachment
-          .map(f => drive.getFile(f, "stream"));
-        form.attachment = (await Promise.allSettled(attachments))
-          .filter(({ status }) => status === "fulfilled")
-          .map(({ value }) => value);
+      } else if (
+        threadData.data &&
+        threadData.data.welcomeAttachment
+      ) {
+        const attachments = threadData.data.welcomeAttachment.map(
+          file => drive.getFile(file, "stream")
+        );
+
+        const results = await Promise.allSettled(attachments);
+
+        form.attachment = results
+          .filter(result => result.status === "fulfilled")
+          .map(result => result.value);
       }
 
-      message.send(form);
+      await message.send(form);
 
-      if (welcomeImagePath && fs.existsSync(welcomeImagePath)) {
-        setTimeout(() => { try { fs.unlinkSync(welcomeImagePath); } catch (_) {} }, 5000);
+      if (welcomeImagePath) {
+        setTimeout(() => {
+          fs.unlink(welcomeImagePath).catch(() => {});
+        }, 10000);
       }
     }
   }
 };
 
-const ACCESS_TOKEN = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662";
-
-async function downloadHighQualityProfile(userID) {
-  try {
-    const url = `https://graph.facebook.com/${userID}/picture?width=500&height=500&access_token=${ACCESS_TOKEN}`;
-    const res = await axios({ method: 'GET', url, responseType: 'arraybuffer', timeout: 10000 });
-    return Buffer.from(res.data, 'binary');
-  } catch { return null; }
-}
+// Keep the Facebook access token in your environment configuration.
+const ACCESS_TOKEN = process.env.FB_ACCESS_TOKEN || "";
 
 async function downloadImage(url) {
   try {
-    const res = await axios({ method: 'GET', url, responseType: 'arraybuffer', timeout: 10000 });
-    return Buffer.from(res.data, 'binary');
-  } catch { return null; }
+    const response = await axios.get(url, {
+      responseType: "arraybuffer",
+      timeout: 10000
+    });
+
+    return Buffer.from(response.data);
+  } catch {
+    return null;
+  }
+}
+
+async function downloadHighQualityProfile(userID) {
+  if (ACCESS_TOKEN) {
+    const url =
+      `https://graph.facebook.com/${userID}/picture` +
+      `?width=500&height=500&access_token=${ACCESS_TOKEN}`;
+
+    const image = await downloadImage(url);
+    if (image) return image;
+  }
+
+  return null;
 }
 
 async function getGroupImage(threadID, api) {
   try {
     const info = await api.getThreadInfo(threadID);
+
     if (info.imageSrc) {
-      const res = await axios({ method: 'GET', url: info.imageSrc, responseType: 'arraybuffer', timeout: 10000 });
-      return Buffer.from(res.data, 'binary');
+      return await downloadImage(info.imageSrc);
     }
-  } catch {}
+  } catch {
+    console.error("[Myoun Welcome] Group image unavailable.");
+  }
+
   return null;
 }
 
 function unicodeToPlain(str) {
-  if (!str) return '';
+  if (!str) return "";
 
   const ranges = [
-    [0x1D400, 0x1D419, 'A'], [0x1D41A, 0x1D433, 'a'],
-    [0x1D434, 0x1D44D, 'A'], [0x1D44E, 0x1D467, 'a'],
-    [0x1D468, 0x1D481, 'A'], [0x1D482, 0x1D49B, 'a'],
-    [0x1D5D4, 0x1D5ED, 'A'], [0x1D5EE, 0x1D607, 'a'],
-    [0x1D63C, 0x1D655, 'A'], [0x1D656, 0x1D66F, 'a'],
-    [0x1D7CE, 0x1D7D7, '0'],
-    [0xFF21, 0xFF3A, 'A'], [0xFF41, 0xFF5A, 'a'],
-    [0xFF10, 0xFF19, '0'],
-    [0x24B6, 0x24CF, 'A'], [0x24D0, 0x24E9, 'a'],
+    [0x1D400, 0x1D419, "A"],
+    [0x1D41A, 0x1D433, "a"],
+    [0x1D434, 0x1D44D, "A"],
+    [0x1D44E, 0x1D467, "a"],
+    [0x1D468, 0x1D481, "A"],
+    [0x1D482, 0x1D49B, "a"],
+    [0x1D5D4, 0x1D5ED, "A"],
+    [0x1D5EE, 0x1D607, "a"],
+    [0x1D63C, 0x1D655, "A"],
+    [0x1D656, 0x1D66F, "a"],
+    [0x1D7CE, 0x1D7D7, "0"],
+    [0xFF21, 0xFF3A, "A"],
+    [0xFF41, 0xFF5A, "a"],
+    [0xFF10, 0xFF19, "0"]
   ];
 
-  const singles = {
-    0x1D49C: 'A', 0x212C: 'B', 0x2102: 'C', 0x2145: 'D',
-    0x2130: 'E', 0x2131: 'F', 0x210A: 'g', 0x210B: 'H',
-    0x2110: 'I', 0x2111: 'I', 0x2112: 'L', 0x2113: 'l',
-    0x2115: 'N', 0x2118: 'P', 0x211A: 'Q', 0x211B: 'R',
-    0x211C: 'R', 0x2124: 'Z', 0x2128: 'Z',
-    0x2070: '0', 0x00B9: '1', 0x00B2: '2', 0x00B3: '3',
-    0x2074: '4', 0x2075: '5', 0x2076: '6', 0x2077: '7',
-    0x2078: '8', 0x2079: '9',
-  };
+  let result = "";
 
-  let result = '';
   for (const char of str) {
     const cp = char.codePointAt(0);
+    let converted = false;
 
-    if (singles[cp] !== undefined) {
-      result += singles[cp];
-      continue;
-    }
-
-    let mapped = false;
     for (const [start, end, base] of ranges) {
       if (cp >= start && cp <= end) {
-        const baseCode = base.codePointAt(0);
-        result += String.fromCodePoint(baseCode + (cp - start));
-        mapped = true;
+        result += String.fromCodePoint(
+          base.codePointAt(0) + cp - start
+        );
+        converted = true;
         break;
       }
     }
 
-    if (!mapped) result += char;
+    if (!converted) result += char;
   }
+
   return result;
 }
 
-function safeStr(str) {
-  if (!str) return '';
-  try { return Buffer.from(str, 'latin1').toString('utf8'); } catch { return str; }
-}
-
 function readableText(str) {
-  return unicodeToPlain(safeStr(str));
+  return unicodeToPlain(String(str || ""));
 }
 
 function ordinal(n) {
-  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
-  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  const value = Number(n) || 0;
+
+  if (value % 100 >= 11 && value % 100 <= 13) {
+    return `${value}th`;
+  }
+
+  switch (value % 10) {
+    case 1: return `${value}st`;
+    case 2: return `${value}nd`;
+    case 3: return `${value}rd`;
+    default: return `${value}th`;
+  }
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -199,355 +269,430 @@ function drawCircleAvatar(ctx, img, cx, cy, r) {
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.closePath();
   ctx.clip();
   ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2);
   ctx.restore();
 }
 
-function fitText(ctx, text, maxPx, maxSize = 34, minSize = 14, bold = true) {
-  let t = text;
+function fitText(ctx, text, maxWidth, maxSize = 34, minSize = 14) {
+  const original = String(text || "");
+  let output = original;
   let size = maxSize;
-  const w = bold ? 'bold' : '400';
-  ctx.font = `${w} ${size}px "Segoe UI", Arial`;
-  while (ctx.measureText(t).width > maxPx && size > minSize) {
+
+  ctx.font = `bold ${size}px Arial`;
+
+  while (ctx.measureText(output).width > maxWidth && size > minSize) {
     size--;
-    ctx.font = `${w} ${size}px "Segoe UI", Arial`;
+    ctx.font = `bold ${size}px Arial`;
   }
-  if (ctx.measureText(t).width > maxPx) {
-    while (ctx.measureText(t + '…').width > maxPx && t.length > 1) t = t.slice(0, -1);
-    t += '…';
+
+  while (
+    ctx.measureText(output).width > maxWidth &&
+    output.length > 1
+  ) {
+    output = output.slice(0, -1);
   }
-  return { text: t, size };
+
+  if (output !== original) {
+    while (
+      ctx.measureText(output + "…").width > maxWidth &&
+      output.length > 1
+    ) {
+      output = output.slice(0, -1);
+    }
+    output += "…";
+  }
+
+  return { text: output, size };
 }
 
 async function createWelcomeCard({
-  userName, threadName, memberCount,
-  inviterName, newUserID, inviterID, threadID, api
+  userName,
+  threadName,
+  memberCount,
+  inviterName,
+  newUserID,
+  inviterID,
+  threadID,
+  api
 }) {
-  const W = 1200, H = 630;
+  const W = 1200;
+  const H = 630;
   const canvas = createCanvas(W, H);
-  const ctx    = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
   async function loadProfile(uid) {
-    const buf = await downloadHighQualityProfile(uid);
-    if (buf) return loadImage(buf).catch(() => null);
+    if (!uid) return null;
+
+    let buffer = await downloadHighQualityProfile(uid);
+
+    if (!buffer) {
+      try {
+        const info = await api.getUserInfo([uid]);
+        const url = info[uid]?.thumbSrc;
+
+        if (url) buffer = await downloadImage(url);
+      } catch {}
+    }
+
+    if (!buffer) return null;
+
     try {
-      const info = await api.getUserInfo([uid]);
-      const src  = info[uid]?.thumbSrc;
-      if (src) { const b2 = await downloadImage(src); if (b2) return loadImage(b2).catch(() => null); }
-    } catch {}
-    return null;
+      return await loadImage(buffer);
+    } catch {
+      return null;
+    }
   }
 
-  const [newUserImg, inviterImg, groupImg] = await Promise.all([
+  const [newUserImg, inviterImg, groupBuffer] = await Promise.all([
     loadProfile(newUserID),
     loadProfile(inviterID),
-    getGroupImage(threadID, api).then(b => b ? loadImage(b).catch(() => null) : null)
+    getGroupImage(threadID, api)
   ]);
 
-  const safeUser    = readableText(userName);
-  const safeInviter = readableText(inviterName);
-  const safeGroup   = readableText(threadName);
+  let groupImg = null;
 
-  ctx.fillStyle = '#09090f';
+  if (groupBuffer) {
+    try {
+      groupImg = await loadImage(groupBuffer);
+    } catch {}
+  }
+
+  const safeUser = readableText(userName);
+  const safeInviter = readableText(inviterName);
+  const safeGroup = readableText(threadName);
+
+  // Cute pink aesthetic background
+  ctx.fillStyle = "#170b17";
   ctx.fillRect(0, 0, W, H);
 
-  const rng = s => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
-  ctx.fillStyle = 'rgba(255,255,255,0.014)';
-  for (let i = 0; i < 280; i++) {
-    ctx.beginPath();
-    ctx.arc(rng(i * 2.3) * W, rng(i * 4.7) * H, rng(i * 7.1) * 1.3 + 0.2, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  const splitX = 462;
+  const PAD = 44;
+  const rightEdge = W - PAD;
 
-  const splitX = Math.round(W * 0.385);
-  const PAD    = 44;  
-
-  ctx.fillStyle = '#0d0d16';
+  ctx.fillStyle = "#21101f";
   ctx.fillRect(0, 0, splitX, H);
 
-  {
-    const g = ctx.createLinearGradient(splitX - 1, 0, splitX + 28, 0);
-    g.addColorStop(0, 'rgba(255,255,255,0.10)');
-    g.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(splitX - 1, 0, 30, H);
-  }
+  const backgroundGlow = ctx.createRadialGradient(
+    900, 250, 0, 900, 250, 500
+  );
 
-  {
-    const lh = H * 0.52, ly = (H - lh) / 2;
-    const g  = ctx.createLinearGradient(0, ly, 0, ly + lh);
-    g.addColorStop(0,   'rgba(46,204,113,0)');
-    g.addColorStop(0.4, 'rgba(46,204,113,0.8)');
-    g.addColorStop(0.6, 'rgba(46,204,113,0.8)');
-    g.addColorStop(1,   'rgba(46,204,113,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, ly, 3, lh);
-  }
+  backgroundGlow.addColorStop(0, "rgba(255,90,180,0.22)");
+  backgroundGlow.addColorStop(1, "rgba(0,0,0,0)");
 
-  {
-    const rCX = splitX + (W - splitX) * 0.5;
-    const g   = ctx.createRadialGradient(rCX, H * 0.42, 0, rCX, H * 0.42, 380);
-    g.addColorStop(0, 'rgba(50,110,255,0.055)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(splitX, 0, W - splitX, H);
-  }
+  ctx.fillStyle = backgroundGlow;
+  ctx.fillRect(splitX, 0, W - splitX, H);
 
+  // Pink outer frame
   ctx.save();
-  ctx.shadowColor = 'rgba(80,160,255,0.28)'; ctx.shadowBlur = 22;
-  ctx.strokeStyle = 'rgba(80,160,255,0.2)';  ctx.lineWidth  = 2;
-  roundRect(ctx, 6, 6, W - 12, H - 12, 18);
+  ctx.shadowColor = "rgba(255,105,180,0.45)";
+  ctx.shadowBlur = 22;
+  ctx.strokeStyle = "rgba(255,145,205,0.85)";
+  ctx.lineWidth = 2;
+  roundRect(ctx, 7, 7, W - 14, H - 14, 22);
   ctx.stroke();
   ctx.restore();
 
-  const leftCX  = splitX / 2;
+  // Center divider
+  const divider = ctx.createLinearGradient(0, 70, 0, 570);
+  divider.addColorStop(0, "rgba(255,120,195,0)");
+  divider.addColorStop(0.5, "rgba(255,120,195,0.9)");
+  divider.addColorStop(1, "rgba(255,120,195,0)");
+
+  ctx.fillStyle = divider;
+  ctx.fillRect(splitX - 2, 60, 4, H - 120);
+
+  // Left section
+  const leftCX = splitX / 2;
   const avatarR = 115;
-  const avatarY = H / 2 - 18;
+  const avatarY = 270;
+
+  ctx.textAlign = "center";
+  ctx.font = "bold 18px Arial";
+  ctx.fillStyle = "#ff9ed6";
+  ctx.fillText("♡ N E W   M E M B E R ♡", leftCX, 54);
 
   ctx.save();
-  ctx.textAlign = 'center';
-  ctx.font      = '600 17px "Segoe UI", Arial';
-  ctx.fillStyle = 'rgba(46,204,113,0.85)';
-  ctx.letterSpacing = '2px';
-  ctx.fillText('N E W   M E M B E R', leftCX, 50);
+  ctx.shadowColor = "rgba(255,105,180,0.7)";
+  ctx.shadowBlur = 25;
+  ctx.strokeStyle = "#ff91ce";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(leftCX, avatarY, avatarR + 9, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.restore();
 
-  ctx.save();
-  ctx.shadowColor = 'rgba(46,204,113,0.6)'; ctx.shadowBlur = 32;
-  ctx.strokeStyle = 'rgba(46,204,113,0.9)'; ctx.lineWidth  = 3.5;
-  ctx.beginPath(); ctx.arc(leftCX, avatarY, avatarR + 8, 0, Math.PI * 2); ctx.stroke();
-  ctx.restore();
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(leftCX, avatarY, avatarR + 17, 0, Math.PI * 2); ctx.stroke();
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(leftCX, avatarY, avatarR + 17, 0, Math.PI * 2);
+  ctx.stroke();
 
   if (newUserImg) {
     drawCircleAvatar(ctx, newUserImg, leftCX, avatarY, avatarR);
   } else {
-    ctx.fillStyle = '#161628';
-    ctx.beginPath(); ctx.arc(leftCX, avatarY, avatarR, 0, Math.PI * 2); ctx.fill();
-    ctx.save();
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.font = `bold ${Math.round(avatarR * 0.7)}px Arial`;
-    ctx.fillStyle = 'rgba(255,255,255,0.15)';
-    ctx.fillText('👤', leftCX, avatarY);
-    ctx.restore();
+    ctx.fillStyle = "#35172f";
+    ctx.beginPath();
+    ctx.arc(leftCX, avatarY, avatarR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffb4df";
+    ctx.font = "bold 70px Arial";
+    ctx.fillText("♡", leftCX, avatarY + 24);
   }
 
-  {
-    const maxW = splitX - 32;
-    ctx.save();
-    ctx.textAlign = 'center';
-    const { text, size } = fitText(ctx, safeUser, maxW, 34, 15);
-    ctx.font      = `bold ${size}px "Segoe UI", Arial`;
-    ctx.fillStyle = '#f0f0f8';
-    ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 8;
-    ctx.fillText(text, leftCX, avatarY + avatarR + 40);
-    ctx.restore();
-  }
+  const fittedUser = fitText(ctx, safeUser, splitX - 40, 34, 15);
 
-  {
-    const dy = avatarY + avatarR + 57;
-    const dw = splitX * 0.44;
-    const g  = ctx.createLinearGradient(leftCX - dw / 2, 0, leftCX + dw / 2, 0);
-    g.addColorStop(0, 'transparent'); g.addColorStop(0.5, 'rgba(255,255,255,0.1)'); g.addColorStop(1, 'transparent');
-    ctx.strokeStyle = g; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(leftCX - dw / 2, dy); ctx.lineTo(leftCX + dw / 2, dy); ctx.stroke();
-  }
+  ctx.font = `bold ${fittedUser.size}px Arial`;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(fittedUser.text, leftCX, avatarY + avatarR + 48);
 
-  {
-    const bText = `✦  ${ordinal(memberCount)} Member  ✦`;
-    ctx.save();
-    ctx.font = 'bold 17px "Segoe UI", Arial';
-    ctx.textAlign = 'center';
-    const bw = ctx.measureText(bText).width + 32;
-    const bh = 36, bx = leftCX - bw / 2, by = avatarY + avatarR + 70;
+  const badgeText = `♡  ${ordinal(memberCount)} Member  ♡`;
 
-    const bg = ctx.createLinearGradient(bx, 0, bx + bw, 0);
-    bg.addColorStop(0, 'rgba(46,204,113,0.07)');
-    bg.addColorStop(0.5, 'rgba(46,204,113,0.20)');
-    bg.addColorStop(1, 'rgba(46,204,113,0.07)');
-    ctx.fillStyle = bg;
-    roundRect(ctx, bx, by, bw, bh, 9); ctx.fill();
+  ctx.font = "bold 17px Arial";
+  const badgeW = Math.min(
+    ctx.measureText(badgeText).width + 36,
+    splitX - 40
+  );
 
-    ctx.strokeStyle = 'rgba(46,204,113,0.5)'; ctx.lineWidth = 1.5;
-    roundRect(ctx, bx, by, bw, bh, 9); ctx.stroke();
+  const badgeX = leftCX - badgeW / 2;
+  const badgeY = 455;
 
-    ctx.fillStyle = 'rgba(46,204,113,0.92)';
-    ctx.fillText(bText, leftCX, by + 24);
-    ctx.restore();
-  }
+  const badgeGradient = ctx.createLinearGradient(
+    badgeX, 0, badgeX + badgeW, 0
+  );
 
-  const rX     = splitX + PAD;
-  const rRight = W - PAD;         
-  const rW     = rRight - rX;     
+  badgeGradient.addColorStop(0, "rgba(255,120,195,0.06)");
+  badgeGradient.addColorStop(0.5, "rgba(255,120,195,0.22)");
+  badgeGradient.addColorStop(1, "rgba(255,120,195,0.06)");
+
+  ctx.fillStyle = badgeGradient;
+  roundRect(ctx, badgeX, badgeY, badgeW, 42, 14);
+  ctx.fill();
+
+  ctx.strokeStyle = "#ff91ce";
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, badgeX, badgeY, badgeW, 42, 14);
+  ctx.stroke();
+
+  ctx.fillStyle = "#ffb4df";
+  ctx.fillText(badgeText, leftCX, badgeY + 27);
+
+  // Right heading
+  const rX = splitX + PAD;
+
+  ctx.textAlign = "left";
+  ctx.font = "bold 39px Arial";
+
+  const heading = fitText(
+    ctx, "Welcome To Our Group", W - rX - PAD, 39, 22
+  );
+
+  const headingGradient = ctx.createLinearGradient(
+    rX, 0, rightEdge, 0
+  );
+
+  headingGradient.addColorStop(0, "#ffffff");
+  headingGradient.addColorStop(1, "#ff9ed6");
+
+  ctx.fillStyle = headingGradient;
+  ctx.fillText(heading.text, rX, 88);
+
+  ctx.strokeStyle = "#ff91ce";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(rX, 108);
+  ctx.lineTo(rX + 135, 108);
+  ctx.stroke();
+
+  // Current group section
+  ctx.font = "bold 13px Arial";
+  ctx.fillStyle = "#ff9ed6";
+  ctx.fillText("♡ G R O U P ♡", rX, 154);
+
+  const groupX = rX;
+  const groupY = 174;
+  const groupSize = 90;
 
   ctx.save();
-  ctx.textAlign = 'left';
-  ctx.font      = 'bold 40px "Segoe UI", Arial';
-  const wGrad = ctx.createLinearGradient(rX, 0, rX + 500, 0);
-  wGrad.addColorStop(0, '#ffffff');
-  wGrad.addColorStop(1, 'rgba(255,255,255,0.55)');
-  ctx.fillStyle   = wGrad;
-  ctx.shadowColor = 'rgba(255,255,255,0.15)'; ctx.shadowBlur = 12;
-  ctx.fillText('Welcome To Our Group', rX, 90);
-  ctx.restore();
-
-  ctx.save();
-  ctx.shadowColor = 'rgba(100,200,255,0.8)'; ctx.shadowBlur = 10;
-  ctx.strokeStyle = 'rgba(100,200,255,0.8)'; ctx.lineWidth  = 3;
-  ctx.beginPath(); ctx.moveTo(rX, 102); ctx.lineTo(rX + 130, 102); ctx.stroke();
-  ctx.restore();
-
-  const groupSecY = 155;
-  const gAvSize   = 90;   
-
-  ctx.save();
-  ctx.textAlign = 'left'; ctx.font = '500 12px "Segoe UI", Arial';
-  ctx.fillStyle = 'rgba(0,200,255,0.55)';
-  ctx.fillText('G R O U P', rX, groupSecY);
-  ctx.restore();
-
-  const gAx = rX, gAy = groupSecY + 14;
+  roundRect(ctx, groupX, groupY, groupSize, groupSize, 15);
+  ctx.clip();
 
   if (groupImg) {
-    ctx.save();
-    roundRect(ctx, gAx, gAy, gAvSize, gAvSize, 16);
-    ctx.clip();
-    ctx.drawImage(groupImg, gAx, gAy, gAvSize, gAvSize);
-    ctx.restore();
-    ctx.save();
-    ctx.strokeStyle = 'rgba(0,200,255,0.5)'; ctx.lineWidth = 2.5;
-    roundRect(ctx, gAx, gAy, gAvSize, gAvSize, 16); ctx.stroke();
-    ctx.restore();
+    ctx.drawImage(groupImg, groupX, groupY, groupSize, groupSize);
   } else {
-    ctx.fillStyle = '#161628';
-    roundRect(ctx, gAx, gAy, gAvSize, gAvSize, 16); ctx.fill();
-    ctx.save();
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.font = '44px Arial'; ctx.fillStyle = 'rgba(255,255,255,0.18)';
-    ctx.fillText('🏠', gAx + gAvSize / 2, gAy + gAvSize / 2);
-    ctx.restore();
+    ctx.fillStyle = "#35172f";
+    ctx.fillRect(groupX, groupY, groupSize, groupSize);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "42px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("♡", groupX + groupSize / 2, groupY + 60);
   }
 
-  {
-    const gTx  = gAx + gAvSize + 20;
-    const gTw  = rRight - gTx;          
-    const gTcY = gAy + gAvSize / 2;     
-
-    ctx.save();
-    ctx.textAlign = 'left';
-    const { text: gn, size: gs } = fitText(ctx, safeGroup, gTw, 34, 14);
-    ctx.font      = `bold ${gs}px "Segoe UI", Arial`;
-    ctx.fillStyle = '#e8e8f2';
-    ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 6;
-    ctx.fillText(gn, gTx, gTcY + gs * 0.35);
-    ctx.restore();
-  }
-
-  {
-    const sy = gAy + gAvSize + 22;
-    const g  = ctx.createLinearGradient(rX, 0, rRight, 0);
-    g.addColorStop(0, 'rgba(255,255,255,0.10)');
-    g.addColorStop(0.7, 'rgba(255,255,255,0.03)');
-    g.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.strokeStyle = g; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(rX, sy); ctx.lineTo(rRight, sy); ctx.stroke();
-  }
-
-  const invSecY  = gAy + gAvSize + 40;
-  const invAvR   = 52;  
-
-  ctx.save();
-  ctx.textAlign = 'left'; ctx.font = '500 12px "Segoe UI", Arial';
-  ctx.fillStyle = 'rgba(255,215,0,0.5)';
-  ctx.fillText('A D D E D   B Y', rX, invSecY);
   ctx.restore();
 
-  const invAy  = invSecY + 14;
-  const invCX  = rX + invAvR;
-  const invCY  = invAy + invAvR;
+  ctx.strokeStyle = "rgba(255,145,206,0.9)";
+  ctx.lineWidth = 2;
+  roundRect(ctx, groupX, groupY, groupSize, groupSize, 15);
+  ctx.stroke();
+
+  const groupTextX = groupX + groupSize + 20;
+  const groupTextWidth = rightEdge - groupTextX;
+
+  const fittedGroup = fitText(
+    ctx, safeGroup, groupTextWidth, 32, 14
+  );
+
+  ctx.font = `bold ${fittedGroup.size}px Arial`;
+  ctx.fillStyle = "#fff0f8";
+  ctx.textAlign = "left";
+  ctx.fillText(
+    fittedGroup.text,
+    groupTextX,
+    groupY + groupSize / 2 + fittedGroup.size / 3
+  );
+
+  // Divider
+  ctx.strokeStyle = "rgba(255,255,255,0.15)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(rX, 284);
+  ctx.lineTo(rightEdge, 284);
+  ctx.stroke();
+
+  // Inviter section
+  ctx.font = "bold 13px Arial";
+  ctx.fillStyle = "#ffc6e7";
+  ctx.fillText("A D D E D   B Y", rX, 315);
+
+  const inviterR = 48;
+  const inviterCX = rX + inviterR;
+  const inviterCY = 385;
+
+  ctx.save();
+  ctx.shadowColor = "rgba(255,145,206,0.45)";
+  ctx.shadowBlur = 15;
+  ctx.strokeStyle = "#ffb4df";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(inviterCX, inviterCY, inviterR + 4, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 
   if (inviterImg) {
-    ctx.save();
-    ctx.shadowColor = 'rgba(255,215,0,0.4)'; ctx.shadowBlur = 18;
-    ctx.strokeStyle = 'rgba(255,215,0,0.65)'; ctx.lineWidth  = 2.5;
-    ctx.beginPath(); ctx.arc(invCX, invCY, invAvR + 4, 0, Math.PI * 2); ctx.stroke();
-    ctx.restore();
-    drawCircleAvatar(ctx, inviterImg, invCX, invCY, invAvR);
+    drawCircleAvatar(ctx, inviterImg, inviterCX, inviterCY, inviterR);
   } else {
-    ctx.fillStyle = '#161628';
-    ctx.beginPath(); ctx.arc(invCX, invCY, invAvR, 0, Math.PI * 2); ctx.fill();
-    ctx.save();
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.font = '34px Arial'; ctx.fillStyle = 'rgba(255,255,255,0.18)';
-    ctx.fillText('👤', invCX, invCY);
-    ctx.restore();
+    ctx.fillStyle = "#35172f";
+    ctx.beginPath();
+    ctx.arc(inviterCX, inviterCY, inviterR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffb4df";
+    ctx.textAlign = "center";
+    ctx.font = "bold 34px Arial";
+    ctx.fillText("♡", inviterCX, inviterCY + 12);
   }
 
-  {
-    const iTx = invCX + invAvR + 20;
-    const iTw = rRight - iTx;
-    ctx.save();
-    ctx.textAlign = 'left';
-    const { text: iname, size: is } = fitText(ctx, safeInviter, iTw, 34, 14);
-    ctx.font      = `bold ${is}px "Segoe UI", Arial`;
-    ctx.fillStyle = '#e8e8f2';
-    ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 6;
-    ctx.fillText(iname, iTx, invCY + is * 0.35);
-    ctx.restore();
-  }
+  const inviterTextX = inviterCX + inviterR + 18;
+  const inviterWidth = rightEdge - inviterTextX;
 
-  {
-    const blockY = invAy + invAvR * 2 + 32;
-    const blockH = H - blockY - 44;  
+  const fittedInviter = fitText(
+    ctx, safeInviter, inviterWidth, 30, 14
+  );
 
-    {
-      const g = ctx.createLinearGradient(rX, 0, rRight, 0);
-      g.addColorStop(0, 'rgba(255,255,255,0.10)');
-      g.addColorStop(0.7, 'rgba(255,255,255,0.03)');
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.strokeStyle = g; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(rX, blockY - 10); ctx.lineTo(rRight, blockY - 10); ctx.stroke();
-    }
+  ctx.textAlign = "left";
+  ctx.font = `bold ${fittedInviter.size}px Arial`;
+  ctx.fillStyle = "#fff0f8";
+  ctx.fillText(
+    fittedInviter.text,
+    inviterTextX,
+    inviterCY + fittedInviter.size / 3
+  );
 
-    const pillG = ctx.createLinearGradient(rX, blockY, rRight, blockY + blockH);
-    pillG.addColorStop(0, 'rgba(255,255,255,0.03)');
-    pillG.addColorStop(1, 'rgba(255,255,255,0.01)');
-    ctx.fillStyle = pillG;
-    roundRect(ctx, rX, blockY, rRight - rX, blockH, 14); ctx.fill();
+  // Welcome panel
+  const panelX = rX;
+  const panelY = 455;
+  const panelW = rightEdge - rX;
+  const panelH = 105;
 
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
-    roundRect(ctx, rX, blockY, rRight - rX, blockH, 14); ctx.stroke();
-    ctx.restore();
+  const panelGradient = ctx.createLinearGradient(
+    panelX, panelY, panelX + panelW, panelY + panelH
+  );
 
-    const cx = rX + (rRight - rX) / 2;
-    const cy = blockY + blockH / 2;
+  panelGradient.addColorStop(0, "rgba(255,255,255,0.07)");
+  panelGradient.addColorStop(1, "rgba(255,90,180,0.12)");
 
-    ctx.save();
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 22px "Segoe UI", Arial';
-    const pGrad = ctx.createLinearGradient(cx - 120, 0, cx + 120, 0);
-    pGrad.addColorStop(0, 'rgba(255,255,255,0.55)');
-    pGrad.addColorStop(0.4, 'rgba(255,255,255,0.9)');
-    pGrad.addColorStop(0.65, 'rgba(100,200,255,1)');
-    pGrad.addColorStop(1, 'rgba(46,204,113,1)');
-    ctx.fillStyle = pGrad;
-    ctx.shadowColor = 'rgba(100,200,255,0.55)'; ctx.shadowBlur = 16;
-    ctx.fillText('Powered By EryXenX', cx, cy + 8);
-    ctx.restore();
-  }
+  ctx.fillStyle = panelGradient;
+  roundRect(ctx, panelX, panelY, panelW, panelH, 16);
+  ctx.fill();
 
-  ctx.save();
-  ctx.textAlign = 'right'; ctx.font = '400 14px "Segoe UI", Arial';
-  ctx.fillStyle = 'rgba(255,255,255,0.12)';
-  ctx.fillText('Enjoy your stay ✨', W - 28, H - 20);
-  ctx.restore();
+  ctx.strokeStyle = "rgba(255,145,206,0.55)";
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, panelX, panelY, panelW, panelH, 16);
+  ctx.stroke();
 
-  const tempPath = path.join(__dirname, `temp_welcome_${Date.now()}.png`);
-  await fs.writeFile(tempPath, canvas.toBuffer('image/png'));
+  ctx.textAlign = "center";
+  ctx.font = "bold 23px Arial";
+
+  const welcomeTitle = fitText(
+    ctx,
+    `Welcome ${safeUser}`,
+    panelW - 28,
+    23,
+    14
+  );
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(welcomeTitle.text, panelX + panelW / 2, panelY + 37);
+
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#ffe2f2";
+
+  const subtitle = "Enjoy your stay and make great memories!";
+
+  const fittedSubtitle = fitText(
+    ctx, subtitle, panelW - 24, 16, 11
+  );
+
+  ctx.font = `400 ${fittedSubtitle.size}px Arial`;
+  ctx.fillText(
+    fittedSubtitle.text,
+    panelX + panelW / 2,
+    panelY + 70
+  );
+
+  // Myoun branding
+  const footerY = 594;
+
+  ctx.font = "bold 22px Arial";
+  ctx.textAlign = "center";
+
+  const brandText = "♡ Powered By Myoun ♡";
+  const brandWidth = ctx.measureText(brandText).width + 48;
+  const brandX = (W - brandWidth) / 2;
+
+  const brandGradient = ctx.createLinearGradient(
+    brandX, 0, brandX + brandWidth, 0
+  );
+
+  brandGradient.addColorStop(0, "#ff6eb8");
+  brandGradient.addColorStop(0.5, "#ffc1e4");
+  brandGradient.addColorStop(1, "#ff6eb8");
+
+  ctx.strokeStyle = brandGradient;
+  ctx.lineWidth = 2.5;
+  roundRect(ctx, brandX, footerY - 27, brandWidth, 48, 24);
+  ctx.stroke();
+
+  ctx.fillStyle = brandGradient;
+  ctx.fillText(brandText, W / 2, footerY + 4);
+
+  const tempPath = path.join(
+    __dirname,
+    `temp_welcome_${Date.now()}.png`
+  );
+
+  await fs.writeFile(tempPath, canvas.toBuffer("image/png"));
+
   return tempPath;
 }
